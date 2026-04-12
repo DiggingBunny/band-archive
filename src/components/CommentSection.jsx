@@ -76,12 +76,10 @@ export default function CommentSection({ videoId, autoExpand, onCountChange }) {
             <div className="comment-list">
               {comments.map(c => (
                 <div key={c.id} className="comment-item">
-                  <div className="comment-header">
-                    <span className="comment-author">{c.author}</span>
-                    <span className="comment-time">{formatTime(c.created_at)}</span>
-                    <button className="comment-delete" onClick={() => handleDelete(c.id)}>×</button>
-                  </div>
-                  <p className="comment-content">{c.content}</p>
+                  <span className="comment-author">{c.author}</span>
+                  <span className="comment-time">{formatTime(c.created_at)}</span>
+                  <span className="comment-content">{c.content}</span>
+                  <button className="comment-delete" onClick={() => handleDelete(c.id)}>×</button>
                 </div>
               ))}
             </div>

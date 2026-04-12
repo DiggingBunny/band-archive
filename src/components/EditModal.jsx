@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { updateVideo, getSongList, getUploaderList, extractYoutubeId } from '../lib/api';
 import ComboBox from './ComboBox';
 
@@ -53,7 +54,7 @@ export default function EditModal({ video, onClose, onSaved }) {
     }
   }
 
-  return (
+  return createPortal(
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
@@ -123,6 +124,7 @@ export default function EditModal({ video, onClose, onSaved }) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { addVideo, getSongList, extractYoutubeId } from '../lib/api';
+import ComboBox from '../components/ComboBox';
 
 export default function UploadPage() {
   const [form, setForm] = useState({
@@ -23,8 +24,32 @@ export default function UploadPage() {
     setPreview(id);
   }, [form.youtubeUrl]);
 
+  // 고유 가수 목록
+  const artistOptions = [...new Set(existingSongs.map(s => s.artist).filter(Boolean))];
+
+  // 선택된 가수의 곡 목록 + 전체 곡 목록
+  const songOptions = form.artist
+    ? [...new Set(existingSongs.filter(s => s.artist === form.artist).map(s => s.songName))]
+    : [...new Set(existingSongs.map(s => s.songName))];
+
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  function handleArtistChange(value) {
+    setForm({ ...form, artist: value, songName: '' });
+  }
+
+  function handleSongChange(value) {
+    // 곡을 선택하면 해당 곡의 가수를 자동 채우기
+    if (value && !form.artist) {
+      const match = existingSongs.find(s => s.songName === value);
+      if (match && match.artist) {
+        setForm({ ...form, songName: value, artist: match.artist });
+        return;
+      }
+    }
+    setForm({ ...form, songName: value });
   }
 
   async function handleSubmit(e) {
@@ -40,7 +65,6 @@ export default function UploadPage() {
       setMessage({ type: 'success', text: '영상이 등록되었습니다!' });
       setForm({ ...form, artist: '', songName: '', youtubeUrl: '', memo: '' });
       setPreview(null);
-      // 곡 목록 갱신
       const songs = await getSongList();
       setExistingSongs(songs);
     } catch (err) {
@@ -57,7 +81,7 @@ export default function UploadPage() {
         <h3>업로드 방법</h3>
         <ol>
           <li>합주 영상을 YouTube에 업로드 (비공개 또는 일부공개 권장)</li>
-          <li>아래 폼에 일자, 곡명, YouTube 링크를 입력</li>
+          <li>아래 폼에 일자, 가수, 곡명, YouTube 링크를 입력</li>
           <li>등록 완료!</li>
         </ol>
       </div>
@@ -75,43 +99,21 @@ export default function UploadPage() {
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="artist">가수</label>
-          <input
-            type="text"
-            id="artist"
-            name="artist"
-            value={form.artist}
-            onChange={handleChange}
-            placeholder="가수명을 입력하세요"
-            list="artist-list"
-            required
-          />
-          <datalist id="artist-list">
-            {[...new Set(existingSongs.map(s => s.artist).filter(Boolean))].map(artist => (
-              <option key={artist} value={artist} />
-            ))}
-          </datalist>
-        </div>
+        <ComboBox
+          label="가수"
+          value={form.artist}
+          onChange={handleArtistChange}
+          options={artistOptions}
+          placeholder="가수명을 입력하세요"
+        />
 
-        <div className="form-group">
-          <label htmlFor="songName">곡명</label>
-          <input
-            type="text"
-            id="songName"
-            name="songName"
-            value={form.songName}
-            onChange={handleChange}
-            placeholder="곡명을 입력하세요"
-            list="song-list"
-            required
-          />
-          <datalist id="song-list">
-            {existingSongs.map(s => (
-              <option key={`${s.artist}-${s.songName}`} value={s.songName} />
-            ))}
-          </datalist>
-        </div>
+        <ComboBox
+          label="곡명"
+          value={form.songName}
+          onChange={handleSongChange}
+          options={songOptions}
+          placeholder="곡명을 입력하세요"
+        />
 
         <div className="form-group">
           <label htmlFor="youtubeUrl">YouTube URL</label>

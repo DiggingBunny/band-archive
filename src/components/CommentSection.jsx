@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getComments, addComment, deleteComment } from '../lib/api';
 
-export default function CommentSection({ videoId, autoExpand }) {
+export default function CommentSection({ videoId, autoExpand, onCountChange }) {
   const [comments, setComments] = useState([]);
   const [author, setAuthor] = useState('');
   const [content, setContent] = useState('');
@@ -18,6 +18,7 @@ export default function CommentSection({ videoId, autoExpand }) {
     try {
       const data = await getComments(videoId);
       setComments(data);
+      if (onCountChange) onCountChange(data.length);
     } catch (err) {
       console.error('Failed to load comments:', err);
     }
@@ -29,8 +30,10 @@ export default function CommentSection({ videoId, autoExpand }) {
     setSubmitting(true);
     try {
       const newComment = await addComment({ videoId, author: author.trim(), content: content.trim() });
-      setComments([...comments, newComment]);
+      const updated = [...comments, newComment];
+      setComments(updated);
       setContent('');
+      if (onCountChange) onCountChange(updated.length);
     } catch (err) {
       alert('댓글 등록 실패: ' + err.message);
     } finally {
@@ -42,7 +45,9 @@ export default function CommentSection({ videoId, autoExpand }) {
     if (!confirm('댓글을 삭제하시겠습니까?')) return;
     try {
       await deleteComment(id);
-      setComments(comments.filter(c => c.id !== id));
+      const updated = comments.filter(c => c.id !== id);
+      setComments(updated);
+      if (onCountChange) onCountChange(updated.length);
     } catch (err) {
       alert('삭제 실패: ' + err.message);
     }

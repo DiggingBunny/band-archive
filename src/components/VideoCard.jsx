@@ -1,17 +1,26 @@
-import { useState } from 'react';
-import { extractYoutubeId } from '../lib/api';
+import { useState, useEffect } from 'react';
+import { extractYoutubeId, getComments } from '../lib/api';
 import CommentSection from './CommentSection';
 import EditModal from './EditModal';
 
 export default function VideoCard({ video, onDelete, onUpdate }) {
   const [editing, setEditing] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [commentCount, setCommentCount] = useState(null);
   const videoId = video.youtube_id || extractYoutubeId(video.youtube_url);
   const thumbUrl = videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : null;
+
+  useEffect(() => {
+    getComments(video.id).then(data => setCommentCount(data.length)).catch(() => {});
+  }, [video.id]);
 
   function handleSaved(updated) {
     setEditing(false);
     if (onUpdate) onUpdate(updated);
+  }
+
+  function handleCommentsToggle() {
+    setShowComments(!showComments);
   }
 
   return (
@@ -37,14 +46,14 @@ export default function VideoCard({ video, onDelete, onUpdate }) {
         <div className="video-row-actions">
           <button className="btn-edit" onClick={() => setEditing(true)}>수정</button>
           {onDelete && <button className="btn-delete" onClick={() => onDelete(video.id)}>삭제</button>}
-          <button className="btn-comment-toggle" onClick={() => setShowComments(!showComments)}>
-            {showComments ? '댓글 ▲' : '댓글 ▼'}
+          <button className="btn-comment-toggle" onClick={handleCommentsToggle}>
+            댓글{commentCount > 0 ? ` (${commentCount})` : ''} {showComments ? '▲' : '▼'}
           </button>
         </div>
       </div>
       {showComments && (
         <div className="video-row-comments">
-          <CommentSection videoId={video.id} autoExpand />
+          <CommentSection videoId={video.id} autoExpand onCountChange={setCommentCount} />
         </div>
       )}
       {editing && (

@@ -6,6 +6,7 @@ import MultiSelect from '../components/MultiSelect';
 export default function SongsPage() {
   const [allVideos, setAllVideos] = useState([]);
   const [selectedSongs, setSelectedSongs] = useState([]);
+  const [dateAsc, setDateAsc] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,7 +24,6 @@ export default function SongsPage() {
     }
   }
 
-  // 고유 곡 옵션 (가수 - 곡명)
   const songOptions = [...new Map(
     allVideos.map(v => [v.song_name, {
       value: v.song_name,
@@ -34,6 +34,14 @@ export default function SongsPage() {
   const filtered = selectedSongs.length === 0
     ? allVideos
     : allVideos.filter(v => selectedSongs.includes(v.song_name));
+
+  const sorted = [...filtered].sort((a, b) => {
+    const dateCompare = dateAsc
+      ? a.date.localeCompare(b.date)
+      : b.date.localeCompare(a.date);
+    if (dateCompare !== 0) return dateCompare;
+    return (a.take || 0) - (b.take || 0);
+  });
 
   async function handleDelete(id) {
     if (!confirm('정말 삭제하시겠습니까?')) return;
@@ -57,12 +65,17 @@ export default function SongsPage() {
         onChange={setSelectedSongs}
         placeholder="곡을 선택하세요 (복수 선택 가능)"
       />
-      <p className="sub-info">총 {filtered.length}개의 영상</p>
-      {filtered.length === 0 ? (
+      <div className="filter-bar">
+        <p className="sub-info">총 {sorted.length}개의 영상</p>
+        <button className="btn-sort" onClick={() => setDateAsc(!dateAsc)}>
+          일자 {dateAsc ? '오래된순 ▲' : '최신순 ▼'}
+        </button>
+      </div>
+      {sorted.length === 0 ? (
         <p className="empty-message">등록된 영상이 없습니다.</p>
       ) : (
         <div className="video-grid">
-          {filtered.map(video => (
+          {sorted.map(video => (
             <VideoCard
               key={video.id}
               video={video}

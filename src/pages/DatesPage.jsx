@@ -32,7 +32,6 @@ export default function DatesPage() {
     return `${year}년 ${month}월 ${day}일 (${weekday})`;
   }
 
-  // 고유 일자 옵션
   const dateOptions = [...new Set(allVideos.map(v => v.date))]
     .sort((a, b) => b.localeCompare(a))
     .map(date => ({ value: date, label: formatDate(date) }));
@@ -40,6 +39,12 @@ export default function DatesPage() {
   const filtered = selectedDates.length === 0
     ? allVideos
     : allVideos.filter(v => selectedDates.includes(v.date));
+
+  const sorted = [...filtered].sort((a, b) => {
+    const songCompare = a.song_name.localeCompare(b.song_name);
+    if (songCompare !== 0) return songCompare;
+    return (a.take || 0) - (b.take || 0);
+  });
 
   async function handleDelete(id) {
     if (!confirm('정말 삭제하시겠습니까?')) return;
@@ -63,12 +68,12 @@ export default function DatesPage() {
         onChange={setSelectedDates}
         placeholder="일자를 선택하세요 (복수 선택 가능)"
       />
-      <p className="sub-info">총 {filtered.length}개의 영상</p>
-      {filtered.length === 0 ? (
+      <p className="sub-info">총 {sorted.length}개의 영상</p>
+      {sorted.length === 0 ? (
         <p className="empty-message">등록된 영상이 없습니다.</p>
       ) : (
         <div className="video-grid">
-          {filtered.map(video => (
+          {sorted.map(video => (
             <VideoCard
               key={video.id}
               video={video}

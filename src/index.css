@@ -471,6 +471,35 @@ body {
   font-size: 0.85rem;
 }
 
+.filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.filter-bar .sub-info {
+  margin-bottom: 0;
+}
+
+.btn-sort {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.btn-sort:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
 .sub-info {
   color: var(--text-secondary);
   margin-bottom: 1rem;

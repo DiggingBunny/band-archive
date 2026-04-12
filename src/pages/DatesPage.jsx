@@ -7,6 +7,7 @@ export default function DatesPage() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [videosLoading, setVideosLoading] = useState(false);
 
   useEffect(() => {
     loadDates();
@@ -23,16 +24,21 @@ export default function DatesPage() {
     }
   }
 
-  async function selectDate(date) {
+  async function handleSelect(date) {
+    if (selectedDate === date) {
+      setSelectedDate(null);
+      setVideos([]);
+      return;
+    }
     setSelectedDate(date);
-    setLoading(true);
+    setVideosLoading(true);
     try {
       const data = await getVideosByDate(date);
       setVideos(data);
     } catch (err) {
       console.error('Failed to load videos:', err);
     } finally {
-      setLoading(false);
+      setVideosLoading(false);
     }
   }
 
@@ -55,40 +61,39 @@ export default function DatesPage() {
     return `${year}년 ${month}월 ${day}일 (${weekday})`;
   }
 
-  if (loading && !selectedDate) return <div className="loading">로딩 중...</div>;
+  if (loading) return <div className="loading">로딩 중...</div>;
 
   return (
     <div className="page">
       <h1>일자별 조회</h1>
-      {!selectedDate ? (
-        <>
-          {dates.length === 0 ? (
-            <p className="empty-message">등록된 합주 일자가 없습니다.</p>
-          ) : (
-            <div className="list-grid">
-              {dates.map(date => (
-                <button key={date} className="list-card" onClick={() => selectDate(date)}>
-                  <span className="list-icon">📅</span>
-                  <span className="list-title">{formatDate(date)}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </>
+      {dates.length === 0 ? (
+        <p className="empty-message">등록된 합주 일자가 없습니다.</p>
       ) : (
         <>
-          <button className="btn-back" onClick={() => setSelectedDate(null)}>
-            ← 일자 목록으로
-          </button>
-          <h2>{formatDate(selectedDate)}</h2>
-          <p className="sub-info">총 {videos.length}개의 영상</p>
-          {loading ? (
-            <div className="loading">로딩 중...</div>
-          ) : (
-            <div className="video-grid">
-              {videos.map(video => (
-                <VideoCard key={video.id} video={video} onDelete={handleDelete} onUpdate={(updated) => setVideos(videos.map(v => v.id === updated.id ? updated : v))} />
-              ))}
+          <div className="chip-list">
+            {dates.map(date => (
+              <button
+                key={date}
+                className={`chip ${selectedDate === date ? 'chip-active' : ''}`}
+                onClick={() => handleSelect(date)}
+              >
+                {formatDate(date)}
+              </button>
+            ))}
+          </div>
+
+          {selectedDate && (
+            <div className="chip-result">
+              <p className="sub-info">{formatDate(selectedDate)} — 총 {videos.length}개의 영상</p>
+              {videosLoading ? (
+                <div className="loading">로딩 중...</div>
+              ) : (
+                <div className="video-grid">
+                  {videos.map(video => (
+                    <VideoCard key={video.id} video={video} onDelete={handleDelete} onUpdate={(updated) => setVideos(videos.map(v => v.id === updated.id ? updated : v))} />
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </>

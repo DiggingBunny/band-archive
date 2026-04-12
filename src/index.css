@@ -311,55 +311,47 @@ body {
   color: var(--text-primary);
 }
 
-/* List Grid (Songs / Dates) */
-.list-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
+/* Chip List (Songs / Dates filter) */
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
-.list-card {
+.chip {
+  padding: 0.5rem 1rem;
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.5rem;
+  border-radius: 20px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
   transition: all 0.2s;
-  color: var(--text-primary);
-  font-size: 1rem;
-  text-align: left;
+  font-family: inherit;
+  white-space: nowrap;
 }
 
-.list-card:hover {
+.chip:hover {
   border-color: var(--accent);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(233, 69, 96, 0.2);
+  color: var(--text-primary);
 }
 
-.list-icon {
-  font-size: 1.5rem;
+.chip-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  font-weight: 600;
 }
 
-.list-title {
-  font-weight: 500;
+.chip-active:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: white;
 }
 
-.btn-back {
-  background: transparent;
-  color: var(--accent);
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  padding: 0.3rem 0;
-  transition: color 0.2s;
-}
-
-.btn-back:hover {
-  color: var(--accent-hover);
+.chip-result {
+  margin-top: 0.5rem;
 }
 
 .sub-info {

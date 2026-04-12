@@ -7,6 +7,7 @@ export default function SongsPage() {
   const [selectedSong, setSelectedSong] = useState(null);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [videosLoading, setVideosLoading] = useState(false);
 
   useEffect(() => {
     loadSongs();
@@ -23,16 +24,21 @@ export default function SongsPage() {
     }
   }
 
-  async function selectSong(song) {
-    setSelectedSong(song);
-    setLoading(true);
+  async function handleSelect(songName) {
+    if (selectedSong === songName) {
+      setSelectedSong(null);
+      setVideos([]);
+      return;
+    }
+    setSelectedSong(songName);
+    setVideosLoading(true);
     try {
-      const data = await getVideosBySong(song);
+      const data = await getVideosBySong(songName);
       setVideos(data);
     } catch (err) {
       console.error('Failed to load videos:', err);
     } finally {
-      setLoading(false);
+      setVideosLoading(false);
     }
   }
 
@@ -46,40 +52,39 @@ export default function SongsPage() {
     }
   }
 
-  if (loading && !selectedSong) return <div className="loading">로딩 중...</div>;
+  if (loading) return <div className="loading">로딩 중...</div>;
 
   return (
     <div className="page">
       <h1>곡별 조회</h1>
-      {!selectedSong ? (
-        <>
-          {songs.length === 0 ? (
-            <p className="empty-message">등록된 곡이 없습니다.</p>
-          ) : (
-            <div className="list-grid">
-              {songs.map(song => (
-                <button key={`${song.artist}-${song.songName}`} className="list-card" onClick={() => selectSong(song.songName)}>
-                  <span className="list-icon">🎵</span>
-                  <span className="list-title">{song.artist && `${song.artist} - `}{song.songName}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </>
+      {songs.length === 0 ? (
+        <p className="empty-message">등록된 곡이 없습니다.</p>
       ) : (
         <>
-          <button className="btn-back" onClick={() => setSelectedSong(null)}>
-            ← 곡 목록으로
-          </button>
-          <h2>{selectedSong}</h2>
-          <p className="sub-info">총 {videos.length}개의 영상</p>
-          {loading ? (
-            <div className="loading">로딩 중...</div>
-          ) : (
-            <div className="video-grid">
-              {videos.map(video => (
-                <VideoCard key={video.id} video={video} onDelete={handleDelete} onUpdate={(updated) => setVideos(videos.map(v => v.id === updated.id ? updated : v))} />
-              ))}
+          <div className="chip-list">
+            {songs.map(song => (
+              <button
+                key={`${song.artist}-${song.songName}`}
+                className={`chip ${selectedSong === song.songName ? 'chip-active' : ''}`}
+                onClick={() => handleSelect(song.songName)}
+              >
+                {song.artist && `${song.artist} - `}{song.songName}
+              </button>
+            ))}
+          </div>
+
+          {selectedSong && (
+            <div className="chip-result">
+              <p className="sub-info">{selectedSong} — 총 {videos.length}개의 영상</p>
+              {videosLoading ? (
+                <div className="loading">로딩 중...</div>
+              ) : (
+                <div className="video-grid">
+                  {videos.map(video => (
+                    <VideoCard key={video.id} video={video} onDelete={handleDelete} onUpdate={(updated) => setVideos(videos.map(v => v.id === updated.id ? updated : v))} />
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </>

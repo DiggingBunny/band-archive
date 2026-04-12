@@ -92,7 +92,7 @@ export default function UploadPage() {
       <div className="upload-guide">
         <h3>업로드 방법</h3>
         <ol>
-          <li>합주 영상을 YouTube에 업로드 (비공개 또는 일부공개 권장)</li>
+          <li>합주 영상을 YouTube에 업로드 (일부공개 권장, 비공개 설정하지 마세요.)</li>
           <li>아래 폼에 일자, 가수, 곡명, YouTube 링크를 입력</li>
           <li>등록 완료!</li>
         </ol>

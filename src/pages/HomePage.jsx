@@ -42,6 +42,14 @@ export default function HomePage() {
   return (
     <div className="page">
       <h1>전체 영상</h1>
+      <a
+        href="https://www.youtube.com/watch?v=giVdR6h3_gE&list=PLTcsmS_HCQAh3QGs-fc9feBo8KwxQC684"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn-playlist"
+      >
+        카카포밴드 선곡용 플레이리스트 바로가기
+      </a>
       <input
         type="text"
         className="search-input"

@@ -91,6 +91,31 @@ body {
   margin-bottom: 0.5rem;
 }
 
+/* Playlist Button */
+.btn-playlist {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.2rem;
+  background: #ff0000;
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+  transition: background 0.2s;
+}
+
+.btn-playlist::before {
+  content: '▶';
+  font-size: 0.8rem;
+}
+
+.btn-playlist:hover {
+  background: #cc0000;
+}
+
 /* Search */
 .search-input {
   width: 100%;

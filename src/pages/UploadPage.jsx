@@ -4,6 +4,7 @@ import { addVideo, getSongList, extractYoutubeId } from '../lib/api';
 export default function UploadPage() {
   const [form, setForm] = useState({
     date: new Date().toISOString().split('T')[0],
+    artist: '',
     songName: '',
     youtubeUrl: '',
     memo: '',
@@ -28,8 +29,8 @@ export default function UploadPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!form.songName.trim() || !form.youtubeUrl.trim()) {
-      setMessage({ type: 'error', text: '곡명과 YouTube URL을 입력해주세요.' });
+    if (!form.artist.trim() || !form.songName.trim() || !form.youtubeUrl.trim()) {
+      setMessage({ type: 'error', text: '가수명, 곡명, YouTube URL을 입력해주세요.' });
       return;
     }
     setSubmitting(true);
@@ -37,7 +38,7 @@ export default function UploadPage() {
     try {
       await addVideo(form);
       setMessage({ type: 'success', text: '영상이 등록되었습니다!' });
-      setForm({ ...form, songName: '', youtubeUrl: '', memo: '' });
+      setForm({ ...form, artist: '', songName: '', youtubeUrl: '', memo: '' });
       setPreview(null);
       // 곡 목록 갱신
       const songs = await getSongList();
@@ -75,6 +76,25 @@ export default function UploadPage() {
         </div>
 
         <div className="form-group">
+          <label htmlFor="artist">가수</label>
+          <input
+            type="text"
+            id="artist"
+            name="artist"
+            value={form.artist}
+            onChange={handleChange}
+            placeholder="가수명을 입력하세요"
+            list="artist-list"
+            required
+          />
+          <datalist id="artist-list">
+            {[...new Set(existingSongs.map(s => s.artist).filter(Boolean))].map(artist => (
+              <option key={artist} value={artist} />
+            ))}
+          </datalist>
+        </div>
+
+        <div className="form-group">
           <label htmlFor="songName">곡명</label>
           <input
             type="text"
@@ -87,11 +107,10 @@ export default function UploadPage() {
             required
           />
           <datalist id="song-list">
-            {existingSongs.map(song => (
-              <option key={song} value={song} />
+            {existingSongs.map(s => (
+              <option key={`${s.artist}-${s.songName}`} value={s.songName} />
             ))}
           </datalist>
-          <small>기존 곡명을 선택하거나 새 곡명을 입력하세요</small>
         </div>
 
         <div className="form-group">

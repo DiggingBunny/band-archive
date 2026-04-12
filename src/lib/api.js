@@ -1,11 +1,11 @@
 import { supabase } from './supabase';
 
 // 영상 등록
-export async function addVideo({ date, songName, youtubeUrl, memo }) {
+export async function addVideo({ date, artist, songName, youtubeUrl, memo }) {
   const videoId = extractYoutubeId(youtubeUrl);
   const { data, error } = await supabase
     .from('videos')
-    .insert([{ date, song_name: songName, youtube_url: youtubeUrl, youtube_id: videoId, memo }])
+    .insert([{ date, artist, song_name: songName, youtube_url: youtubeUrl, youtube_id: videoId, memo }])
     .select();
   if (error) throw error;
   return data[0];
@@ -43,14 +43,14 @@ export async function getVideosByDate(date) {
   return data;
 }
 
-// 고유 곡명 목록
+// 고유 곡명 목록 (가수명 포함)
 export async function getSongList() {
   const { data, error } = await supabase
     .from('videos')
-    .select('song_name')
+    .select('artist, song_name')
     .order('song_name');
   if (error) throw error;
-  const unique = [...new Set(data.map(d => d.song_name))];
+  const unique = [...new Map(data.map(d => [`${d.artist}||${d.song_name}`, { artist: d.artist, songName: d.song_name }])).values()];
   return unique;
 }
 

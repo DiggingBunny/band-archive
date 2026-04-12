@@ -58,9 +58,9 @@ export default function SongsPage() {
           ) : (
             <div className="list-grid">
               {songs.map(song => (
-                <button key={song} className="list-card" onClick={() => selectSong(song)}>
+                <button key={`${song.artist}-${song.songName}`} className="list-card" onClick={() => selectSong(song.songName)}>
                   <span className="list-icon">🎵</span>
-                  <span className="list-title">{song}</span>
+                  <span className="list-title">{song.artist && `${song.artist} - `}{song.songName}</span>
                 </button>
               ))}
             </div>

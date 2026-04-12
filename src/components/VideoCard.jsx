@@ -22,7 +22,7 @@ export default function VideoCard({ video, onDelete }) {
         )}
       </div>
       <div className="video-info">
-        <h3 className="video-song">{video.song_name}</h3>
+        <h3 className="video-song">{video.artist && `${video.artist} - `}{video.song_name}</h3>
         <span className="video-date">{video.date}</span>
         {video.memo && <p className="video-memo">{video.memo}</p>}
         {onDelete && (

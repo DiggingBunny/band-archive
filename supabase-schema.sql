@@ -3,6 +3,7 @@
 CREATE TABLE videos (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   date DATE NOT NULL,
+  artist TEXT,
   song_name TEXT NOT NULL,
   youtube_url TEXT NOT NULL,
   youtube_id TEXT,

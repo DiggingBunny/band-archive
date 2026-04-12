@@ -33,7 +33,8 @@ export default function HomePage() {
   }
 
   const filtered = videos.filter(v =>
-    v.song_name.toLowerCase().includes(search.toLowerCase())
+    v.song_name.toLowerCase().includes(search.toLowerCase()) ||
+    (v.artist && v.artist.toLowerCase().includes(search.toLowerCase()))
   );
 
   if (loading) return <div className="loading">로딩 중...</div>;
@@ -44,7 +45,7 @@ export default function HomePage() {
       <input
         type="text"
         className="search-input"
-        placeholder="곡명으로 검색..."
+        placeholder="가수명 또는 곡명으로 검색..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />

@@ -7,6 +7,7 @@ export default function UploadPage() {
     date: new Date().toISOString().split('T')[0],
     artist: '',
     songName: '',
+    take: '',
     youtubeUrl: '',
     memo: '',
   });
@@ -63,7 +64,7 @@ export default function UploadPage() {
     try {
       await addVideo(form);
       setMessage({ type: 'success', text: '영상이 등록되었습니다!' });
-      setForm({ ...form, artist: '', songName: '', youtubeUrl: '', memo: '' });
+      setForm({ ...form, artist: '', songName: '', take: '', youtubeUrl: '', memo: '' });
       setPreview(null);
       const songs = await getSongList();
       setExistingSongs(songs);
@@ -114,6 +115,20 @@ export default function UploadPage() {
           options={songOptions}
           placeholder="곡명을 입력하세요"
         />
+
+        <div className="form-group">
+          <label htmlFor="take">Take</label>
+          <input
+            type="number"
+            id="take"
+            name="take"
+            value={form.take}
+            onChange={handleChange}
+            placeholder="테이크 숫자를 입력하세요 (예: 1, 2, 3)"
+            min="1"
+          />
+          <small>같은 날 같은 곡을 여러 번 합주했을 때 구분용 (선택)</small>
+        </div>
 
         <div className="form-group">
           <label htmlFor="youtubeUrl">YouTube URL</label>

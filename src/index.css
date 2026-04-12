@@ -169,6 +169,13 @@ body {
   margin-bottom: 0.3rem;
 }
 
+.video-take {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--accent);
+  margin-left: 0.4rem;
+}
+
 .video-date {
   color: var(--text-secondary);
   font-size: 0.9rem;

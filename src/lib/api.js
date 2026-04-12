@@ -1,11 +1,11 @@
 import { supabase } from './supabase';
 
 // 영상 등록
-export async function addVideo({ date, artist, songName, youtubeUrl, memo }) {
+export async function addVideo({ date, artist, songName, take, youtubeUrl, memo }) {
   const videoId = extractYoutubeId(youtubeUrl);
   const { data, error } = await supabase
     .from('videos')
-    .insert([{ date, artist, song_name: songName, youtube_url: youtubeUrl, youtube_id: videoId, memo }])
+    .insert([{ date, artist, song_name: songName, take: take || null, youtube_url: youtubeUrl, youtube_id: videoId, memo }])
     .select();
   if (error) throw error;
   return data[0];
@@ -27,7 +27,8 @@ export async function getVideosBySong(songName) {
     .from('videos')
     .select('*')
     .eq('song_name', songName)
-    .order('date', { ascending: false });
+    .order('date', { ascending: false })
+    .order('take', { ascending: true });
   if (error) throw error;
   return data;
 }
@@ -38,7 +39,8 @@ export async function getVideosByDate(date) {
     .from('videos')
     .select('*')
     .eq('date', date)
-    .order('song_name', { ascending: true });
+    .order('song_name', { ascending: true })
+    .order('take', { ascending: true });
   if (error) throw error;
   return data;
 }

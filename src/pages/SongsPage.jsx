@@ -78,7 +78,7 @@ export default function SongsPage() {
           ) : (
             <div className="video-grid">
               {videos.map(video => (
-                <VideoCard key={video.id} video={video} onDelete={handleDelete} />
+                <VideoCard key={video.id} video={video} onDelete={handleDelete} onUpdate={(updated) => setVideos(videos.map(v => v.id === updated.id ? updated : v))} />
               ))}
             </div>
           )}

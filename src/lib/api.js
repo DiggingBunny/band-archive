@@ -77,6 +77,18 @@ export async function getUploaderList() {
   return [...new Set(data.map(d => d.uploaded_by).filter(Boolean))];
 }
 
+// 영상 수정
+export async function updateVideo(id, { date, artist, songName, take, youtubeUrl, memo, uploadedBy }) {
+  const videoId = extractYoutubeId(youtubeUrl);
+  const { data, error } = await supabase
+    .from('videos')
+    .update({ date, artist, song_name: songName, take: take || null, youtube_url: youtubeUrl, youtube_id: videoId, memo, uploaded_by: uploadedBy || null })
+    .eq('id', id)
+    .select();
+  if (error) throw error;
+  return data[0];
+}
+
 // 영상 삭제
 export async function deleteVideo(id) {
   const { error } = await supabase.from('videos').delete().eq('id', id);

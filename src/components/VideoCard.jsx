@@ -1,8 +1,16 @@
+import { useState } from 'react';
 import { extractYoutubeId } from '../lib/api';
 import CommentSection from './CommentSection';
+import EditModal from './EditModal';
 
-export default function VideoCard({ video, onDelete }) {
+export default function VideoCard({ video, onDelete, onUpdate }) {
+  const [editing, setEditing] = useState(false);
   const videoId = video.youtube_id || extractYoutubeId(video.youtube_url);
+
+  function handleSaved(updated) {
+    setEditing(false);
+    if (onUpdate) onUpdate(updated);
+  }
 
   return (
     <div className="video-card">
@@ -29,13 +37,17 @@ export default function VideoCard({ video, onDelete }) {
         <span className="video-date">{video.date}</span>
         {video.uploaded_by && <span className="video-uploader">by {video.uploaded_by}</span>}
         {video.memo && <p className="video-memo">{video.memo}</p>}
-        {onDelete && (
-          <button className="btn-delete" onClick={() => onDelete(video.id)}>
-            삭제
-          </button>
-        )}
+        <div className="video-actions">
+          <button className="btn-edit" onClick={() => setEditing(true)}>수정</button>
+          {onDelete && (
+            <button className="btn-delete" onClick={() => onDelete(video.id)}>삭제</button>
+          )}
+        </div>
       </div>
       <CommentSection videoId={video.id} />
+      {editing && (
+        <EditModal video={video} onClose={() => setEditing(false)} onSaved={handleSaved} />
+      )}
     </div>
   );
 }

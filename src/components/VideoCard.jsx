@@ -1,4 +1,5 @@
 import { extractYoutubeId } from '../lib/api';
+import CommentSection from './CommentSection';
 
 export default function VideoCard({ video, onDelete }) {
   const videoId = video.youtube_id || extractYoutubeId(video.youtube_url);
@@ -30,6 +31,7 @@ export default function VideoCard({ video, onDelete }) {
           </button>
         )}
       </div>
+      <CommentSection videoId={video.id} />
     </div>
   );
 }

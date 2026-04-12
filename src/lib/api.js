@@ -71,6 +71,33 @@ export async function deleteVideo(id) {
   if (error) throw error;
 }
 
+// 댓글 조회
+export async function getComments(videoId) {
+  const { data, error } = await supabase
+    .from('comments')
+    .select('*')
+    .eq('video_id', videoId)
+    .order('created_at', { ascending: true });
+  if (error) throw error;
+  return data;
+}
+
+// 댓글 작성
+export async function addComment({ videoId, author, content }) {
+  const { data, error } = await supabase
+    .from('comments')
+    .insert([{ video_id: videoId, author, content }])
+    .select();
+  if (error) throw error;
+  return data[0];
+}
+
+// 댓글 삭제
+export async function deleteComment(id) {
+  const { error } = await supabase.from('comments').delete().eq('id', id);
+  if (error) throw error;
+}
+
 // YouTube URL에서 video ID 추출
 export function extractYoutubeId(url) {
   if (!url) return null;

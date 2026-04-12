@@ -74,7 +74,7 @@ export default function UploadPage() {
       }
       await addVideo(form);
       setMessage({ type: 'success', text: '영상이 등록되었습니다!' });
-      setForm({ ...form, artist: '', songName: '', take: '', youtubeUrl: '', memo: '', uploadedBy: '' });
+      setForm({ ...form, take: '', youtubeUrl: '' });
       setPreview(null);
       const [songs, uploaders] = await Promise.all([getSongList(), getUploaderList()]);
       setExistingSongs(songs);

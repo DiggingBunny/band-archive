@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { getComments, addComment, deleteComment } from '../lib/api';
 
-export default function CommentSection({ videoId }) {
+export default function CommentSection({ videoId, autoExpand }) {
   const [comments, setComments] = useState([]);
   const [author, setAuthor] = useState('');
   const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(autoExpand || false);
 
   useEffect(() => {
     if (expanded) {

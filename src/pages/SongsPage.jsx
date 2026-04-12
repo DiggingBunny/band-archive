@@ -74,7 +74,7 @@ export default function SongsPage() {
       {sorted.length === 0 ? (
         <p className="empty-message">등록된 영상이 없습니다.</p>
       ) : (
-        <div className="video-grid">
+        <div className="video-list">
           {sorted.map(video => (
             <VideoCard
               key={video.id}

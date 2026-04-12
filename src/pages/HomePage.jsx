@@ -64,7 +64,7 @@ export default function HomePage() {
             : '검색 결과가 없습니다.'}
         </p>
       ) : (
-        <div className="video-grid">
+        <div className="video-list">
           {filtered.map(video => (
             <VideoCard key={video.id} video={video} onDelete={handleDelete} onUpdate={(updated) => setVideos(videos.map(v => v.id === updated.id ? updated : v))} />
           ))}

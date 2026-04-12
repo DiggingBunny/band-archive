@@ -1,54 +1,25 @@
 import { useState, useEffect } from 'react';
-import { getDateList, getVideosByDate, deleteVideo } from '../lib/api';
+import { getAllVideos, deleteVideo } from '../lib/api';
 import VideoCard from '../components/VideoCard';
+import MultiSelect from '../components/MultiSelect';
 
 export default function DatesPage() {
-  const [dates, setDates] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [videos, setVideos] = useState([]);
+  const [allVideos, setAllVideos] = useState([]);
+  const [selectedDates, setSelectedDates] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [videosLoading, setVideosLoading] = useState(false);
 
   useEffect(() => {
-    loadDates();
+    loadVideos();
   }, []);
 
-  async function loadDates() {
+  async function loadVideos() {
     try {
-      const data = await getDateList();
-      setDates(data);
-    } catch (err) {
-      console.error('Failed to load dates:', err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleSelect(date) {
-    if (selectedDate === date) {
-      setSelectedDate(null);
-      setVideos([]);
-      return;
-    }
-    setSelectedDate(date);
-    setVideosLoading(true);
-    try {
-      const data = await getVideosByDate(date);
-      setVideos(data);
+      const data = await getAllVideos();
+      setAllVideos(data);
     } catch (err) {
       console.error('Failed to load videos:', err);
     } finally {
-      setVideosLoading(false);
-    }
-  }
-
-  async function handleDelete(id) {
-    if (!confirm('정말 삭제하시겠습니까?')) return;
-    try {
-      await deleteVideo(id);
-      setVideos(videos.filter(v => v.id !== id));
-    } catch (err) {
-      alert('삭제 실패: ' + err.message);
+      setLoading(false);
     }
   }
 
@@ -61,42 +32,51 @@ export default function DatesPage() {
     return `${year}년 ${month}월 ${day}일 (${weekday})`;
   }
 
+  // 고유 일자 옵션
+  const dateOptions = [...new Set(allVideos.map(v => v.date))]
+    .sort((a, b) => b.localeCompare(a))
+    .map(date => ({ value: date, label: formatDate(date) }));
+
+  const filtered = selectedDates.length === 0
+    ? allVideos
+    : allVideos.filter(v => selectedDates.includes(v.date));
+
+  async function handleDelete(id) {
+    if (!confirm('정말 삭제하시겠습니까?')) return;
+    try {
+      await deleteVideo(id);
+      setAllVideos(allVideos.filter(v => v.id !== id));
+    } catch (err) {
+      alert('삭제 실패: ' + err.message);
+    }
+  }
+
   if (loading) return <div className="loading">로딩 중...</div>;
 
   return (
     <div className="page">
       <h1>일자별 조회</h1>
-      {dates.length === 0 ? (
-        <p className="empty-message">등록된 합주 일자가 없습니다.</p>
+      <MultiSelect
+        label="일자 선택"
+        options={dateOptions}
+        selected={selectedDates}
+        onChange={setSelectedDates}
+        placeholder="일자를 선택하세요 (복수 선택 가능)"
+      />
+      <p className="sub-info">총 {filtered.length}개의 영상</p>
+      {filtered.length === 0 ? (
+        <p className="empty-message">등록된 영상이 없습니다.</p>
       ) : (
-        <>
-          <div className="chip-list">
-            {dates.map(date => (
-              <button
-                key={date}
-                className={`chip ${selectedDate === date ? 'chip-active' : ''}`}
-                onClick={() => handleSelect(date)}
-              >
-                {formatDate(date)}
-              </button>
-            ))}
-          </div>
-
-          {selectedDate && (
-            <div className="chip-result">
-              <p className="sub-info">{formatDate(selectedDate)} — 총 {videos.length}개의 영상</p>
-              {videosLoading ? (
-                <div className="loading">로딩 중...</div>
-              ) : (
-                <div className="video-grid">
-                  {videos.map(video => (
-                    <VideoCard key={video.id} video={video} onDelete={handleDelete} onUpdate={(updated) => setVideos(videos.map(v => v.id === updated.id ? updated : v))} />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </>
+        <div className="video-grid">
+          {filtered.map(video => (
+            <VideoCard
+              key={video.id}
+              video={video}
+              onDelete={handleDelete}
+              onUpdate={(updated) => setAllVideos(allVideos.map(v => v.id === updated.id ? updated : v))}
+            />
+          ))}
+        </div>
       )}
     </div>
   );

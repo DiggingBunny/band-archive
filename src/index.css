@@ -311,47 +311,164 @@ body {
   color: var(--text-primary);
 }
 
-/* Chip List (Songs / Dates filter) */
-.chip-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+/* MultiSelect Dropdown */
+.multi-select {
+  position: relative;
   margin-bottom: 1.5rem;
 }
 
-.chip {
-  padding: 0.5rem 1rem;
-  background: var(--bg-card);
+.multi-select-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.multi-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 0.5rem 0.8rem;
+  background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-radius: 20px;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
+  border-radius: 8px;
   cursor: pointer;
+  transition: border-color 0.2s;
+  gap: 0.5rem;
+}
+
+.multi-select-trigger:hover {
+  border-color: var(--accent);
+}
+
+.multi-select-placeholder {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.multi-select-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.multi-select-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  background: var(--accent);
+  color: white;
+  border-radius: 14px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.multi-select-tag-remove {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  font-size: 0.9rem;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.multi-select-tag-remove:hover {
+  color: white;
+}
+
+.multi-select-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.multi-select-clear {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
   transition: all 0.2s;
   font-family: inherit;
   white-space: nowrap;
 }
 
-.chip:hover {
-  border-color: var(--accent);
+.multi-select-clear:hover {
+  color: var(--error);
+}
+
+.multi-select-arrow {
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+}
+
+.multi-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 4px;
+  z-index: 50;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.multi-select-search {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  background: var(--bg-secondary);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  outline: none;
+  font-family: inherit;
+}
+
+.multi-select-options {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.multi-select-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 0.9rem;
   color: var(--text-primary);
 }
 
-.chip-active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: white;
-  font-weight: 600;
+.multi-select-option:hover {
+  background: rgba(233, 69, 96, 0.1);
 }
 
-.chip-active:hover {
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
-  color: white;
+.multi-select-option input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 }
 
-.chip-result {
-  margin-top: 0.5rem;
+.multi-select-empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
 }
 
 .sub-info {

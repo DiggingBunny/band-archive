@@ -1,11 +1,11 @@
 import { supabase } from './supabase';
 
 // 영상 등록
-export async function addVideo({ date, artist, songName, take, youtubeUrl, memo }) {
+export async function addVideo({ date, artist, songName, take, youtubeUrl, memo, uploadedBy }) {
   const videoId = extractYoutubeId(youtubeUrl);
   const { data, error } = await supabase
     .from('videos')
-    .insert([{ date, artist, song_name: songName, take: take || null, youtube_url: youtubeUrl, youtube_id: videoId, memo }])
+    .insert([{ date, artist, song_name: songName, take: take || null, youtube_url: youtubeUrl, youtube_id: videoId, memo, uploaded_by: uploadedBy || null }])
     .select();
   if (error) throw error;
   return data[0];
@@ -65,6 +65,16 @@ export async function getDateList() {
   if (error) throw error;
   const unique = [...new Set(data.map(d => d.date))];
   return unique;
+}
+
+// 고유 업로더 목록
+export async function getUploaderList() {
+  const { data, error } = await supabase
+    .from('videos')
+    .select('uploaded_by')
+    .order('uploaded_by');
+  if (error) throw error;
+  return [...new Set(data.map(d => d.uploaded_by).filter(Boolean))];
 }
 
 // 영상 삭제

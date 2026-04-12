@@ -181,6 +181,12 @@ body {
   font-size: 0.9rem;
 }
 
+.video-uploader {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-left: 0.5rem;
+}
+
 .video-memo {
   color: var(--text-secondary);
   font-size: 0.85rem;

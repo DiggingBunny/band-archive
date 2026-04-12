@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { addVideo, getSongList, extractYoutubeId } from '../lib/api';
+import { addVideo, getSongList, getUploaderList, extractYoutubeId } from '../lib/api';
 import ComboBox from '../components/ComboBox';
 
 export default function UploadPage() {
@@ -10,14 +10,17 @@ export default function UploadPage() {
     take: '',
     youtubeUrl: '',
     memo: '',
+    uploadedBy: '',
   });
   const [existingSongs, setExistingSongs] = useState([]);
+  const [existingUploaders, setExistingUploaders] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
   const [preview, setPreview] = useState(null);
 
   useEffect(() => {
     getSongList().then(setExistingSongs).catch(console.error);
+    getUploaderList().then(setExistingUploaders).catch(console.error);
   }, []);
 
   useEffect(() => {
@@ -64,10 +67,11 @@ export default function UploadPage() {
     try {
       await addVideo(form);
       setMessage({ type: 'success', text: '영상이 등록되었습니다!' });
-      setForm({ ...form, artist: '', songName: '', take: '', youtubeUrl: '', memo: '' });
+      setForm({ ...form, artist: '', songName: '', take: '', youtubeUrl: '', memo: '', uploadedBy: '' });
       setPreview(null);
-      const songs = await getSongList();
+      const [songs, uploaders] = await Promise.all([getSongList(), getUploaderList()]);
       setExistingSongs(songs);
+      setExistingUploaders(uploaders);
     } catch (err) {
       setMessage({ type: 'error', text: '등록 실패: ' + err.message });
     } finally {
@@ -155,6 +159,14 @@ export default function UploadPage() {
             />
           </div>
         )}
+
+        <ComboBox
+          label="업로드한 사람"
+          value={form.uploadedBy}
+          onChange={(value) => setForm({ ...form, uploadedBy: value })}
+          options={existingUploaders}
+          placeholder="이름을 입력하세요"
+        />
 
         <div className="form-group">
           <label htmlFor="memo">메모 (선택)</label>

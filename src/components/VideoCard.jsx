@@ -27,6 +27,7 @@ export default function VideoCard({ video, onDelete }) {
           {video.take && <span className="video-take">#{video.take}</span>}
         </h3>
         <span className="video-date">{video.date}</span>
+        {video.uploaded_by && <span className="video-uploader">by {video.uploaded_by}</span>}
         {video.memo && <p className="video-memo">{video.memo}</p>}
         {onDelete && (
           <button className="btn-delete" onClick={() => onDelete(video.id)}>

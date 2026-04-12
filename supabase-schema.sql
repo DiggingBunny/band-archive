@@ -6,6 +6,7 @@ CREATE TABLE videos (
   artist TEXT,
   song_name TEXT NOT NULL,
   take INTEGER,
+  uploaded_by TEXT,
   youtube_url TEXT NOT NULL,
   youtube_id TEXT,
   memo TEXT,

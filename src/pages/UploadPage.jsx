@@ -141,6 +141,7 @@ export default function UploadPage() {
             placeholder="https://www.youtube.com/watch?v=... 또는 https://youtu.be/..."
             required
           />
+          <small>⚠️ YouTube 공개 범위를 '비공개'로 설정하면 본인 외에는 재생이 불가합니다. 반드시 <strong>'일부공개(미등록)'</strong>로 설정해주세요.</small>
         </div>
 
         {preview && (

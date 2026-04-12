@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { addVideo, getSongList, getUploaderList, extractYoutubeId } from '../lib/api';
+import { addVideo, checkDuplicate, getSongList, getUploaderList, extractYoutubeId } from '../lib/api';
 import ComboBox from '../components/ComboBox';
 
 export default function UploadPage() {
@@ -65,6 +65,13 @@ export default function UploadPage() {
     setSubmitting(true);
     setMessage(null);
     try {
+      const dup = await checkDuplicate(form.youtubeUrl);
+      if (dup) {
+        const dupInfo = `${dup.artist ? dup.artist + ' - ' : ''}${dup.song_name} (${dup.date})`;
+        setMessage({ type: 'error', text: `이미 등록된 영상입니다: ${dupInfo}` });
+        setSubmitting(false);
+        return;
+      }
       await addVideo(form);
       setMessage({ type: 'success', text: '영상이 등록되었습니다!' });
       setForm({ ...form, artist: '', songName: '', take: '', youtubeUrl: '', memo: '', uploadedBy: '' });

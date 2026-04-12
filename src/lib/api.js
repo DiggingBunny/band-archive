@@ -1,5 +1,17 @@
 import { supabase } from './supabase';
 
+// 중복 YouTube URL 확인
+export async function checkDuplicate(youtubeUrl) {
+  const videoId = extractYoutubeId(youtubeUrl);
+  const { data, error } = await supabase
+    .from('videos')
+    .select('id, song_name, date, artist')
+    .or(`youtube_url.eq.${youtubeUrl},youtube_id.eq.${videoId}`)
+    .limit(1);
+  if (error) throw error;
+  return data.length > 0 ? data[0] : null;
+}
+
 // 영상 등록
 export async function addVideo({ date, artist, songName, take, youtubeUrl, memo, uploadedBy }) {
   const videoId = extractYoutubeId(youtubeUrl);

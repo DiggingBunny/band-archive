@@ -41,6 +41,8 @@ export default function DatesPage() {
     : allVideos.filter(v => selectedDates.includes(v.date));
 
   const sorted = [...filtered].sort((a, b) => {
+    const dateCompare = b.date.localeCompare(a.date);
+    if (dateCompare !== 0) return dateCompare;
     const songCompare = a.song_name.localeCompare(b.song_name);
     if (songCompare !== 0) return songCompare;
     return (a.take || 0) - (b.take || 0);

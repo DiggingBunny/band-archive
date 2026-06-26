@@ -973,6 +973,128 @@ body {
   cursor: not-allowed;
 }
 
+/* Peer Review (꼬리물기) */
+.peer-controls {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.peer-date {
+  padding: 0.7rem 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  outline: none;
+  font-family: inherit;
+  color-scheme: dark;
+}
+
+.peer-date:focus {
+  border-color: var(--accent);
+}
+
+.btn-start {
+  padding: 0.7rem 2rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: inherit;
+}
+
+.btn-start:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.btn-start:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.peer-result {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.peer-result-date {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 1.2rem;
+}
+
+.peer-chain {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.peer-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.peer-pos {
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.peer-pos.supervisor {
+  color: var(--text-primary);
+}
+
+.peer-pos.target {
+  color: var(--accent);
+}
+
+.peer-arrow {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.peer-desc {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.peer-ring-note {
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .peer-desc {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
 /* Loading & Empty */
 .loading {
   text-align: center;

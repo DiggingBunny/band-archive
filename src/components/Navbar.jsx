@@ -13,6 +13,7 @@ export default function Navbar() {
         <Link to="/songs" className={isActive('/songs')}>곡별</Link>
         <Link to="/dates" className={isActive('/dates')}>일자별</Link>
         <Link to="/upload" className={isActive('/upload')}>업로드</Link>
+        <Link to="/peer" className={isActive('/peer')}>피어리뷰</Link>
       </div>
     </nav>
   );

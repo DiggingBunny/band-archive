@@ -134,6 +134,27 @@ export async function deleteComment(id) {
   if (error) throw error;
 }
 
+// 피어리뷰(꼬리물기) 조회 - 날짜별
+export async function getPeerReview(date) {
+  const { data, error } = await supabase
+    .from('peer_reviews')
+    .select('*')
+    .eq('date', date)
+    .limit(1);
+  if (error) throw error;
+  return data.length > 0 ? data[0] : null;
+}
+
+// 피어리뷰(꼬리물기) 저장 - 날짜별 upsert
+export async function savePeerReview(date, chain) {
+  const { data, error } = await supabase
+    .from('peer_reviews')
+    .upsert({ date, chain }, { onConflict: 'date' })
+    .select();
+  if (error) throw error;
+  return data[0];
+}
+
 // YouTube URL에서 video ID 추출
 export function extractYoutubeId(url) {
   if (!url) return null;

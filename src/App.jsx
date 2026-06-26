@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage';
 import SongsPage from './pages/SongsPage';
 import DatesPage from './pages/DatesPage';
 import UploadPage from './pages/UploadPage';
+import PeerPage from './pages/PeerPage';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Route path="/songs" element={<SongsPage />} />
             <Route path="/dates" element={<DatesPage />} />
             <Route path="/upload" element={<UploadPage />} />
+            <Route path="/peer" element={<PeerPage />} />
           </Routes>
         </main>
       </div>

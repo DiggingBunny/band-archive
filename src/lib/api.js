@@ -155,6 +155,25 @@ export async function savePeerReview(date, chain) {
   return data[0];
 }
 
+// 피어리뷰가 있었던 날짜 목록 (최신순)
+export async function getPeerReviewDates() {
+  const { data, error } = await supabase
+    .from('peer_reviews')
+    .select('date')
+    .order('date', { ascending: false });
+  if (error) throw error;
+  return data.map(d => d.date);
+}
+
+// 피어리뷰 삭제 - 날짜별
+export async function deletePeerReview(date) {
+  const { error } = await supabase
+    .from('peer_reviews')
+    .delete()
+    .eq('date', date);
+  if (error) throw error;
+}
+
 // YouTube URL에서 video ID 추출
 export function extractYoutubeId(url) {
   if (!url) return null;

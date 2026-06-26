@@ -1028,11 +1028,55 @@ body {
   padding: 1.5rem;
 }
 
+.peer-result-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
 .peer-result-date {
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--accent);
-  margin-bottom: 1.2rem;
+}
+
+.peer-history {
+  margin-top: -0.5rem;
+}
+
+.peer-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.8rem;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.peer-date-chip {
+  padding: 0.4rem 0.8rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.peer-date-chip:hover {
+  border-color: var(--accent);
+}
+
+.peer-date-chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  font-weight: 600;
 }
 
 .peer-chain {

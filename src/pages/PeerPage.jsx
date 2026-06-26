@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { getPeerReview, savePeerReview } from '../lib/api';
+import { useState, useEffect, useRef } from 'react';
+import { getPeerReview, savePeerReview, getPeerReviewDates, deletePeerReview } from '../lib/api';
 
 const POSITIONS = [
   { id: '기타', emoji: '🎸' },
   { id: '건반', emoji: '🎹' },
   { id: '보컬', emoji: '🎤' },
   { id: '드럼', emoji: '🥁' },
-  { id: '베이스', emoji: '🎻' },
+  { id: '베이스', emoji: '🎸' },
 ];
 const EMOJI = Object.fromEntries(POSITIONS.map(p => [p.id, p.emoji]));
 
@@ -41,7 +41,12 @@ export default function PeerPage() {
   const [chain, setChain] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [reviewDates, setReviewDates] = useState([]);
+  const [dropOpen, setDropOpen] = useState(false);
+  const dropRef = useRef(null);
 
+  // 선택된 날짜의 배정 불러오기
   useEffect(() => {
     let cancelled = false;
     async function load() {
@@ -60,6 +65,28 @@ export default function PeerPage() {
     return () => { cancelled = true; };
   }, [date]);
 
+  // 피어리뷰가 있었던 날짜 목록 불러오기
+  async function loadDates() {
+    try {
+      setReviewDates(await getPeerReviewDates());
+    } catch (err) {
+      console.error('Failed to load peer review dates:', err);
+    }
+  }
+
+  useEffect(() => { loadDates(); }, []);
+
+  // 드롭다운 바깥 클릭 시 닫기
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (dropRef.current && !dropRef.current.contains(e.target)) {
+        setDropOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   async function handleStart() {
     if (chain && !confirm('이미 배정된 결과가 있습니다. 다시 섞을까요?')) return;
     setSaving(true);
@@ -67,11 +94,31 @@ export default function PeerPage() {
       const newChain = shuffle(POSITIONS.map(p => p.id));
       await savePeerReview(date, newChain);
       setChain(newChain);
+      await loadDates();
     } catch (err) {
       alert('저장 실패: ' + err.message);
     } finally {
       setSaving(false);
     }
+  }
+
+  async function handleDelete() {
+    if (!confirm(`${formatDate(date)}의 피어리뷰를 삭제할까요?`)) return;
+    setDeleting(true);
+    try {
+      await deletePeerReview(date);
+      setChain(null);
+      await loadDates();
+    } catch (err) {
+      alert('삭제 실패: ' + err.message);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  function pickDate(d) {
+    setDate(d);
+    setDropOpen(false);
   }
 
   return (
@@ -93,6 +140,38 @@ export default function PeerPage() {
         </button>
       </div>
 
+      {/* 이전 피어리뷰 드롭다운 칩 */}
+      <div className="multi-select peer-history" ref={dropRef}>
+        <div className="multi-select-trigger" onClick={() => setDropOpen(!dropOpen)}>
+          <span className="multi-select-placeholder">
+            📅 이전 피어리뷰 다시보기 ({reviewDates.length}개)
+          </span>
+          <div className="multi-select-actions">
+            <span className="multi-select-arrow">{dropOpen ? '▲' : '▼'}</span>
+          </div>
+        </div>
+        {dropOpen && (
+          <div className="multi-select-dropdown">
+            {reviewDates.length === 0 ? (
+              <div className="multi-select-empty">아직 기록이 없습니다</div>
+            ) : (
+              <div className="peer-chip-list">
+                {reviewDates.map(d => (
+                  <button
+                    key={d}
+                    type="button"
+                    className={d === date ? 'peer-date-chip active' : 'peer-date-chip'}
+                    onClick={() => pickDate(d)}
+                  >
+                    {formatDate(d)}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       {loading ? (
         <div className="loading">로딩 중...</div>
       ) : !chain ? (
@@ -103,7 +182,12 @@ export default function PeerPage() {
         </p>
       ) : (
         <div className="peer-result">
-          <p className="peer-result-date">{formatDate(date)} 감독 배정</p>
+          <div className="peer-result-head">
+            <p className="peer-result-date">{formatDate(date)} 감독 배정</p>
+            <button className="btn-delete" onClick={handleDelete} disabled={deleting}>
+              {deleting ? '삭제 중...' : '삭제'}
+            </button>
+          </div>
           <div className="peer-chain">
             {chain.map((pos, i) => {
               const target = chain[(i + 1) % chain.length];
